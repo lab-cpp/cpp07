@@ -1,123 +1,42 @@
-# cpp-template
+# C++ Module 07 - C++ Templates
 
-> **GitHub Template** for 42 School C++ modules.
-> Every new module repo should be created from this template.
+## Overview
+This module introduces **Templates** in C++, a powerful feature that allows you to write generic, type-safe code. Instead of copying and pasting the exact same function for `int`, `float`, and `std::string`, you write one "blueprint" (a template), and the compiler automatically generates the correct code for whatever type you use.
 
----
+## Key Concepts
 
-## Repository Structure
-
+### 1. Function Templates (ex00, ex01)
+A function template defines a family of functions. 
+```cpp
+template <typename T>
+void myPrint(T value) {
+    std::cout << value << std::endl;
+}
 ```
-cpp-template/
-├── .github/
-│   └── workflows/
-│       └── ci.yml          ← GitHub Actions CI/CD pipeline
-├── .clang-format           ← Code style configuration
-├── .gitignore              ← Compiled artifacts ignored by git
-├── Makefile                ← Module-level build & test runner
-├── README.md               ← This file (replace with module notes)
-└── ex00/                   ← Example exercise scaffold
-    ├── Makefile
-    ├── main.cpp
-    └── test.sh
-```
+**Type Deduction:** When you call `myPrint(42)`, the compiler automatically deduces that `T` is an `int`. When you call `myPrint("Hello")`, the compiler deduces `T` is a `const char*`. The compiler physically generates a different function for each type you use behind the scenes.
 
-Each module follows the pattern:
+### 2. Class Templates (ex02)
+A class template defines a family of classes, like `std::vector` or `std::map` from the standard library.
+```cpp
+template <typename T>
+class Box {
+    private:
+        T _content;
+    public:
+        Box(T content) : _content(content) {}
+};
 ```
-cppXX/
-├── Makefile      ← builds & tests all exercises
-├── README.md     ← theoretical notes for the module
-└── exNN/
-    ├── Makefile  ← 42 flags: -Wall -Wextra -Werror -std=c++98
-    ├── *.hpp
-    ├── *.cpp
-    └── test.sh   ← functional tests (run by CI)
+Unlike function templates, **Type Deduction does not work for classes in C++98**. You must explicitly tell the compiler what type to generate when creating the object:
+```cpp
+Box<int> myIntBox(42);
+Box<std::string> myStringBox("Hello");
 ```
 
----
+### 3. Why `.hpp` only?
+In standard C++ programming, you put declarations in `.hpp` files and implementations in `.cpp` files. 
+**With templates, this rule is broken.** 
+Because a template is just a "blueprint," the compiler cannot compile it into machine code until it knows what `T` is. When you use `Box<int>` in `main.cpp`, the compiler needs to see the full implementation of the `Box` class *right then and there* to generate the `int` version. If the implementation is hidden inside a `.cpp` file that hasn't been linked yet, you will get "Undefined Reference" linker errors. 
+Therefore, **all template implementations must be placed inside header files** (or in a `.tpp` file that is included at the bottom of the `.hpp` file).
 
-## CI/CD Pipeline
-
-The CI runs automatically on every push/PR to `main` or `develop`.
-
-| Job | What it does |
-|-----|-------------|
-| **Discover** | Scans for `ex*/Makefile` directories |
-| **Compile** | Builds each exercise in parallel (matrix) |
-| **Test** | Runs `test.sh` per exercise + Valgrind smoke test |
-| **Format** | Checks `clang-format` compliance (advisory warning) |
-| **Norm** | Checks forbidden keywords + strict 42 compile flags |
-| **CI Gate** | Blocks merge if compile / test / norm fail |
-
-### Status Badge
-Replace `ORG/REPO` with your organization and repository name:
-
-```markdown
-![CI](https://github.com/ORG/REPO/actions/workflows/ci.yml/badge.svg)
-```
-
----
-
-## Local Development
-
-```bash
-# Build all exercises
-make
-
-# Run all test.sh scripts
-make test
-
-# Clean .o files
-make clean
-
-# Remove .o and binaries
-make fclean
-
-# Rebuild from scratch
-make re
-
-# List exercises discovered
-make list
-```
-
-Inside a single exercise:
-```bash
-cd ex00
-make          # compile
-./test.sh     # run functional tests
-make fclean   # clean up
-```
-
----
-
-## 42 Rules enforced by CI
-
-| Rule | Enforcement |
-|------|-------------|
-| `-Wall -Wextra -Werror -std=c++98` | **Build fails** if any warning exists |
-| `using namespace` forbidden | **Norm job fails** |
-| `friend` keyword forbidden | **Norm job fails** |
-| `printf / malloc / free` forbidden | **Norm job fails** |
-| No memory leaks | Valgrind smoke test (warning) |
-| Code style | `clang-format` check (advisory) |
-
----
-
-## Adding a New Exercise
-
-1. Copy `ex00/` to `ex01/`, `ex02/`, etc.
-2. Edit `NAME` and `SRCS` in the new `Makefile`.
-3. Write your implementation (`.cpp` / `.hpp`).
-4. Add your test cases to `test.sh`.
-5. Push – CI will pick up the new directory automatically.
-
----
-
-## Code Style
-
-Style is governed by `.clang-format` (Allman braces, 4-space indent, 100-col limit).
-
-Auto-fix all files:
-```bash
-find . -name "*.cpp" -o -name "*.hpp" | xargs clang-format -i
-```
+### 4. `typename` vs `class`
+In template declarations like `template <typename T>` and `template <class T>`, the keywords `typename` and `class` do exactly the same thing. `typename` was introduced later because using `class` was confusing (since `T` could be an `int`, which is obviously not a class). Evaluators prefer seeing `typename T`.
