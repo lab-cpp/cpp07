@@ -44,7 +44,7 @@ EXPECTED_OUTPUT="--- Testing Array of Ints ---
 2 3 4 5 6 
 
 --- Testing Array of Strings ---
-Hello world from C++98"
+Hello world from C++98 "
 
 ACTUAL=$($BINARY)
 
