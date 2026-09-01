@@ -1,16 +1,21 @@
-#include "iter.hpp"
 #include <iostream>
 #include <string>
 
-template <typename T>void printElement(const T& element) {
+#include "iter.hpp"
+
+template <typename T>
+void printElement(const T& element)
+{
     std::cout << element << " ";
 }
 
-void incrementInt(int& num) {
+void incrementInt(int& num)
+{
     num++;
 }
 
-int main() {
+int main()
+{
     int intArray[] = {1, 2, 3, 4, 5};
     size_t intLen = sizeof(intArray) / sizeof(int);
 

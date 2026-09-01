@@ -1,5 +1,8 @@
+#include <cstdlib>
+#include <exception>
 #include <iostream>
-#include <Array.hpp>
+
+#include "Array.hpp"
 
 #define MAX_VAL 750
 int main(int, char**)
@@ -31,7 +34,7 @@ int main(int, char**)
     {
         numbers[-2] = 0;
     }
-    catch(const std::exception& e)
+    catch (const std::exception& e)
     {
         std::cerr << e.what() << '\n';
     }
@@ -39,7 +42,7 @@ int main(int, char**)
     {
         numbers[MAX_VAL] = 0;
     }
-    catch(const std::exception& e)
+    catch (const std::exception& e)
     {
         std::cerr << e.what() << '\n';
     }
@@ -48,6 +51,16 @@ int main(int, char**)
     {
         numbers[i] = rand();
     }
-    delete [] mirror;//
+    delete[] mirror;  //
+
+    std::cout << "\n--- Testing Parametrized Constructor failure (bad_alloc) ---" << std::endl;
+    try
+    {
+        Array<int> hugeArr(-1);
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "Caught bad_alloc thrown by system: " << e.what() << std::endl;
+    }
     return 0;
 }
