@@ -2,8 +2,7 @@
 #include <iostream>
 #include <string>
 
-template <typename T>
-void printElement(const T& element) {
+template <typename T>void printElement(const T& element) {
     std::cout << element << " ";
 }
 
