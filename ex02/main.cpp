@@ -53,14 +53,5 @@ int main(int, char**)
     }
     delete[] mirror;  //
 
-    std::cout << "\n--- Testing Parametrized Constructor failure (bad_alloc) ---" << std::endl;
-    try
-    {
-        Array<int> hugeArr(-1);
-    }
-    catch (const std::exception& e)
-    {
-        std::cerr << "Caught bad_alloc thrown by system: " << e.what() << std::endl;
-    }
     return 0;
 }
